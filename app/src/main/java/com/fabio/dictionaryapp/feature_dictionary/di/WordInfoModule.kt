@@ -2,6 +2,7 @@ package com.fabio.dictionaryapp.feature_dictionary.di
 
 import android.app.Application
 import androidx.room.Room
+import com.fabio.dictionaryapp.feature_dictionary.data.local.Converters
 import com.fabio.dictionaryapp.feature_dictionary.data.local.WordInfoDatabase
 import com.fabio.dictionaryapp.feature_dictionary.data.remote.DictionaryApi
 import com.fabio.dictionaryapp.feature_dictionary.data.remote.DictionaryApi.Companion.BASE_URL
@@ -47,7 +48,7 @@ object WordInfoModule {
             app,
             WordInfoDatabase::class.java,
             "word_db"
-        ).addTypeConverter(GsonParser(Gson())).build()
+        ).addTypeConverter(Converters(GsonParser(Gson()))).build()
     }
 
     @Provides

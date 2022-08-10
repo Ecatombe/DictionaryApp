@@ -21,7 +21,7 @@ class WordInfoViewModel @Inject constructor(
     private val getWordInfo: GetWordInfo
 ) : ViewModel() {
 
-    private val _searchQuery = mutableStateOf<String>("")
+    private val _searchQuery = mutableStateOf("")
     val searchQuery: State<String> = _searchQuery
 
     private val _state = mutableStateOf(WordInfoState())
@@ -39,37 +39,34 @@ class WordInfoViewModel @Inject constructor(
             delay(500L)
             getWordInfo(query)
                 .onEach { result ->
-                    when (result) {
+                    when(result) {
                         is Resource.Success -> {
                             _state.value = state.value.copy(
-                                wordInfoItem = result.data ?: emptyList(),
+                                wordInfoItems = result.data ?: emptyList(),
                                 isLoading = false
                             )
                         }
                         is Resource.Error -> {
                             _state.value = state.value.copy(
-                                wordInfoItem = result.data ?: emptyList(),
+                                wordInfoItems = result.data ?: emptyList(),
                                 isLoading = false
                             )
-                            _eventFlow.emit(
-                                UIEvent.ShowSnackBar(
-                                    result.message ?: "Unknown error"
-                                )
-                            )
+                            _eventFlow.emit(UIEvent.ShowSnackbar(
+                                result.message ?: "Unknown error"
+                            ))
                         }
                         is Resource.Loading -> {
                             _state.value = state.value.copy(
-                                wordInfoItem = result.data ?: emptyList(),
+                                wordInfoItems = result.data ?: emptyList(),
                                 isLoading = true
                             )
                         }
                     }
-
                 }.launchIn(this)
         }
     }
 
     sealed class UIEvent {
-        data class ShowSnackBar(val message: String) : UIEvent()
+        data class ShowSnackbar(val message: String): UIEvent()
     }
 }

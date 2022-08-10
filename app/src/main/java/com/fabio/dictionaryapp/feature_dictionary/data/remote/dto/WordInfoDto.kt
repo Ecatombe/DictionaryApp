@@ -4,7 +4,7 @@ import com.fabio.dictionaryapp.feature_dictionary.data.local.entry.WordInfoEntit
 
 data class WordInfoDto(
     val meanings: List<MeaningDto>,
-    val origin: String,
+    val origin: String?,
     val phonetic: String,
     val phonetics: List<PhoneticDto>,
     val word: String

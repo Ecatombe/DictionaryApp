@@ -8,7 +8,7 @@ import com.fabio.dictionaryapp.feature_dictionary.domain.model.WordInfo
 @Entity
 data class WordInfoEntity(
     val meanings: List<Meaning>,
-    val origin: String,
+    val origin: String?,
     val phonetic: String,
     val word: String,
     @PrimaryKey val id: Int? = null
