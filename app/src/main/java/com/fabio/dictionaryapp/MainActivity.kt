@@ -8,12 +8,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.fabio.dictionaryapp.feature_dictionary.presentation.WordInfoItem
 import com.fabio.dictionaryapp.feature_dictionary.presentation.WordInfoViewModel
-
 import com.fabio.dictionaryapp.ui.theme.DictionaryAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -61,20 +61,23 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                             Spacer(modifier = Modifier.height(16.dp))
-                            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                            LazyColumn(
+                                modifier = Modifier.fillMaxSize()
+                            ) {
                                 items(state.wordInfoItems.size) { i ->
                                     val wordInfo = state.wordInfoItems[i]
                                     if (i > 0) {
                                         Spacer(modifier = Modifier.height(8.dp))
                                     }
-                                    WordInfoItem(
-                                        wordInfo = wordInfo
-                                    )
+                                    WordInfoItem(wordInfo = wordInfo)
                                     if (i < state.wordInfoItems.size - 1) {
                                         Divider()
                                     }
                                 }
                             }
+                        }
+                        if (state.isLoading) {
+                            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                         }
                     }
                 }
@@ -82,4 +85,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
