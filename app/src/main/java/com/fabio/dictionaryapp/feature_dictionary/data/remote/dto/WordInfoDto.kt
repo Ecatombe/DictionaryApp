@@ -5,7 +5,7 @@ import com.fabio.dictionaryapp.feature_dictionary.data.local.entry.WordInfoEntit
 data class WordInfoDto(
     val meanings: List<MeaningDto>,
     val origin: String?,
-    val phonetic: String,
+    val phonetic: String?,
     val phonetics: List<PhoneticDto>,
     val word: String
 ) {
@@ -13,7 +13,7 @@ data class WordInfoDto(
         return WordInfoEntity(
             meanings = meanings.map { it.toMeaning() },
             origin = origin,
-            phonetic = phonetic,
+            phonetic = phonetic ?: phonetics.firstOrNull { it.text.isNotBlank() }?.text ?: "",
             word = word
         )
     }

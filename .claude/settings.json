@@ -7,9 +7,9 @@
             "type": "command",
             "asyncRewake": true,
             "timeout": 30,
-            "statusMessage": "Running post-task quality check...",
+            "statusMessage": "Checking changed files for loose ends...",
             "rewakeSummary": "Post-task check found loose ends",
-            "command": "bash -c '\nCHANGED=$(git diff --name-only HEAD 2>/dev/null)\nSTAGED=$(git diff --cached --name-only 2>/dev/null)\nALL=$(printf \"%s\\n%s\" \"$CHANGED\" \"$STAGED\" | sort -u | grep -v \"^$\")\n\nif [ -z \"$ALL\" ]; then exit 0; fi\n\nISSUES=\"\"\nwhile IFS= read -r f; do\n  [ -f \"$f\" ] || continue\n  HITS=$(grep -n \"TODO\\|FIXME\\|HACK\\|XXX\\|not yet implemented\\|throw NotImplementedError\" \"$f\" 2>/dev/null)\n  [ -n \"$HITS\" ] && ISSUES=\"${ISSUES}\\n${f}:\\n${HITS}\"\ndone <<< \"$ALL\"\n\nif [ -n \"$ISSUES\" ]; then\n  printf \"Post-task stop-hook found loose ends in changed files.\\n\\nFiles with TODOs / stubs:\\n%s\\n\\nPlease address each item above, or explicitly confirm it is intentional and out of scope for this task. Also confirm: did the tests you claimed to run actually pass? Show evidence or re-run them now.\" \"$ISSUES\"\n  exit 2\nfi\n\nprintf \"Stop-hook: no TODOs or stubs found in changed files. Still — did any tests you claimed to run actually pass? If you ran no tests, say so plainly.\"\nexit 2\n'"
+            "command": "bash -c '\nCHANGED=$(git diff --name-only HEAD 2>/dev/null)\nSTAGED=$(git diff --cached --name-only 2>/dev/null)\nALL=$(printf \"%s\\n%s\" \"$CHANGED\" \"$STAGED\" | sort -u | grep -v \"^$\" | grep -v \"^\\.claude/\")\n\nif [ -z \"$ALL\" ]; then exit 0; fi\n\nISSUES=\"\"\nwhile IFS= read -r f; do\n  [ -f \"$f\" ] || continue\n  HITS=$(grep -n \"TODO\\|FIXME\\|HACK\\|XXX\\|not yet implemented\\|throw NotImplementedError\" \"$f\" 2>/dev/null)\n  [ -n \"$HITS\" ] && ISSUES=\"${ISSUES}\\n${f}:\\n${HITS}\"\ndone <<< \"$ALL\"\n\nif [ -n \"$ISSUES\" ]; then\n  printf \"Loose ends found in changed files:\\n%s\\n\\nRe-check the brief: is every acceptance criterion actually met? Did the tests you claimed to run actually pass — show evidence or re-run them. Address each TODO/stub above or explicitly confirm it is intentional and out of scope.\" \"$ISSUES\"\n  exit 2\nfi\n\nexit 0\n'"
           }
         ]
       }

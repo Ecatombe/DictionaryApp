@@ -19,13 +19,16 @@ class WordInfoRepositoryImpl(
         // Starting the loading screen
         emit(Resource.Loading())
         //Supply the data from our DB
-        val wordInfos = dao.getWordInfos(word).map { it.toWordInfo() }
+        val escapedWord = word.escapeLikeWildcards()
+        val wordInfos = dao.getWordInfos(escapedWord).map { it.toWordInfo() }
         emit(Resource.Loading(data = wordInfos))
         // Initiate the api call and replace the item in oud DB with the api response
         try {
             val remoteWordInfos = api.getWordInfo(word)
-            dao.deleteWordInfos(remoteWordInfos.map { it.word })
-            dao.insertWordInfos(remoteWordInfos.map { it.toWordInfoEntity() })
+            dao.replaceWordInfos(
+                words = remoteWordInfos.map { it.word },
+                infos = remoteWordInfos.map { it.toWordInfoEntity() }
+            )
         }
         // If wer get invalid response
         catch (e: HttpException) {
@@ -46,8 +49,12 @@ class WordInfoRepositoryImpl(
             )
         }
         // if we don't have errors we emit the success (from our DB)
-        val newWordInfos = dao.getWordInfos(word).map { it.toWordInfo() }
+        val newWordInfos = dao.getWordInfos(escapedWord).map { it.toWordInfo() }
         emit(Resource.Success(newWordInfos))
 
     }
 }
+
+// escapes LIKE wildcards so a search term is matched literally, not as a SQL pattern
+private fun String.escapeLikeWildcards(): String =
+    replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")

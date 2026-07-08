@@ -11,9 +11,15 @@ class GetWordInfo(
 ) {
 
     operator fun invoke(word: String): Flow<Resource<List<WordInfo>>> {
-        if (word.isBlank()) {
+        val trimmedWord = word.trim()
+        if (trimmedWord.isBlank() || trimmedWord.length > MAX_WORD_LENGTH) {
             return flow { }
         }
-        return repository.getWordInfo(word)
+        return repository.getWordInfo(trimmedWord)
+    }
+
+    companion object {
+        // no dictionary entry is anywhere near this long; guards against pathological input
+        private const val MAX_WORD_LENGTH = 100
     }
 }
