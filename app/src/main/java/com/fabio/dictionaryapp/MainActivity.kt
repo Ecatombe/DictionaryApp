@@ -42,10 +42,11 @@ class MainActivity : ComponentActivity() {
                 }
                 Scaffold(
                     scaffoldState = scaffoldState
-                ) {
+                ) { innerPadding ->
                     Box(
                         modifier = Modifier
                             .background(MaterialTheme.colors.background)
+                            .padding(innerPadding)
                     ) {
                         Column(
                             modifier = Modifier
